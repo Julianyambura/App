@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Balance App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 flex justify-center items-center h-screen">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
+      <h1 class="text-2xl font-bold mb-4">Your Balance</h1>
+      <div class="mb-6">
+        <div class="text-4xl font-bold text-green-600" id="balance">
+          Ksh0.00
+        </div>
+      </div>
+      <div class="mb-4">
+        <input
+          type="number"
+          id="amount"
+          class="border rounded p-2 w-full"
+          placeholder="Enter amount"
+        />
+      </div>
+      <div class="flex space-x-4 mb-6">
+        <button
+          onclick="deposit()"
+          class="bg-blue-500 text-white rounded px-4 py-2"
+        >
+          Deposit
+        </button>
+        <button
+          onclick="withdraw()"
+          class="bg-red-500 text-white rounded px-4 py-2"
+        >
+          Withdraw
+        </button>
+      </div>
+      <table class="min-w-full bg-white">
+        <thead>
+          <tr>
+            <th class="py-2 px-4 border-b">Date</th>
+            <th class="py-2 px-4 border-b">Transaction Code</th>
+            <th class="py-2 px-4 border-b">Amount</th>
+            <th class="py-2 px-4 border-b">Type</th>
+          </tr>
+        </thead>
+        <tbody id="transaction-table">
+          <!-- Transaction rows will be appended here -->
+        </tbody>
+      </table>
+    </div>
+    <script>
+      let balance = 0;
+      let transactionCount = 0;
+
+      function updateBalanceDisplay() {
+        document.getElementById("balance").innerText = `$${balance.toFixed(2)}`;
+      }
+
+      function addTransaction(amount, type) {
+        const date = new Date().toLocaleString();
+        const transactionCode = Math.random()
+          .toString(36)
+          .substring(2, 10)
+          .toUpperCase();
+
+        transactionCount += 1;
+        const transactionRow = `
+                <tr>
+                    <td class="py-2 px-4 border-b">${transactionCount}</td>
+                    <td class="py-2 px-4 border-b">${date}</td>
+                    <td class="py-2 px-4 border-b">${transactionCode}</td>
+                    <td class="py-2 px-4 border-b">${amount.toFixed(2)}</td>
+                    <td class="py-2 px-4 border-b">${type}</td>
+                </tr>
+            `;
+        document
+          .getElementById("transaction-table")
+          .insertAdjacentHTML("beforeend", transactionRow);
+      }
+
+      function deposit() {
+        const amount = parseFloat(document.getElementById("amount").value);
+        if (amount > 0) {
+          balance += amount;
+          updateBalanceDisplay();
+          addTransaction(amount, "Deposit");
+        } else {
+          alert("Please enter a valid amount to deposit.");
+        }
+      }
+
+      function withdraw() {
+        const amount = parseFloat(document.getElementById("amount").value);
+        if (amount > 0 && amount <= balance) {
+          balance -= amount;
+          updateBalanceDisplay();
+          addTransaction(amount, "Withdraw");
+        } else if (amount > balance) {
+          alert("Insufficient funds for withdrawal.");
+        } else {
+          alert("Please enter a valid amount to withdraw.");
+        }
+      }
+    </script>
+  </body>
+</html>
